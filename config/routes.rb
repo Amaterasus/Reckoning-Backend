@@ -4,5 +4,6 @@ Rails.application.routes.draw do
 
   get "/validate", to: "users#validate"
 
+  post "/register", to: "users#register"
   post "/login", to: "users#login"
 end

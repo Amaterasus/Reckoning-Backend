@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 2020_05_13_184334) do
     t.string "password_digest"
     t.string "email"
     t.date "dob"
-    t.integer "steamID64"
+    t.bigint "steamID64"
     t.string "bio"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

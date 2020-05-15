@@ -1,6 +1,8 @@
 class User < ApplicationRecord
     has_secure_password
 
+    validates :steamID64, length: { is: 17 }
+
 
 
     def age

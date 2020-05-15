@@ -1,4 +1,9 @@
 class UsersController < ApplicationController
+    
+    def register
+        user = User.create(createUserParams)
+        user.update(passwordParams)
+    end
 
     def login
         user = User.find_by(username: params[:username])
@@ -21,4 +26,13 @@ class UsersController < ApplicationController
     end
 
 
+    private
+
+    def createUserParams
+        params.require(:user).permit(:username, :email, :dob, :steamID64)
+    end
+
+    def passwordParams
+        params.permit(:password, :password_confirmation)
+    end
 end
