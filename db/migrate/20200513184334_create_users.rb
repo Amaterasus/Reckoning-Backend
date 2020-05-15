@@ -7,6 +7,7 @@ class CreateUsers < ActiveRecord::Migration[6.0]
       t.date :dob
       t.bigint :steamID64
       t.string :bio
+      t.boolean :admin, :default => false
 
       t.timestamps
     end

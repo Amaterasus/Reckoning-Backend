@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 2020_05_13_184334) do
     t.date "dob"
     t.bigint "steamID64"
     t.string "bio"
+    t.boolean "admin", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
