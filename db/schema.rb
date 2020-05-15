@@ -19,8 +19,9 @@ ActiveRecord::Schema.define(version: 2020_05_13_184334) do
     t.string "username"
     t.string "password_digest"
     t.string "email"
+    t.string "steam_avatar_url"
     t.date "dob"
-    t.bigint "steamID64"
+    t.string "steamID64"
     t.string "bio"
     t.boolean "admin", default: false
     t.datetime "created_at", precision: 6, null: false

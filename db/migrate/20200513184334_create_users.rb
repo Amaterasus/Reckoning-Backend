@@ -4,8 +4,9 @@ class CreateUsers < ActiveRecord::Migration[6.0]
       t.string :username
       t.string :password_digest
       t.string :email
+      t.string :steam_avatar_url
       t.date :dob
-      t.bigint :steamID64
+      t.string :steamID64
       t.string :bio
       t.boolean :admin, :default => false
 
