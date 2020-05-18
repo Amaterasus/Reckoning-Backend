@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   get "/validate", to: "users#validate"
 
-  get "/usersGames/:id", to: "users#games"
+  post "/avatar", to: "users#avatar"
 
   post "/register", to: "users#register"
   post "/login", to: "users#login"
