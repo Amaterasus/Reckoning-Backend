@@ -2,7 +2,11 @@ class UsersController < ApplicationController
 
     def show
         user = User.find_by(id: params[:id])
-        render json: {user: user, games: user.games }
+        if user.games
+            render json: {user: user, games: user.games }
+        else
+            render json: {user: user, message: "Games failed to fetch" }
+        end
     end
 
     def register
@@ -39,6 +43,16 @@ class UsersController < ApplicationController
         avatar = User.new(steamID64: params[:user][:steamID64]).getAvatar["avatarfull"]
 
         render json: {steam_avatar_url: avatar}
+    end
+
+    def search
+        currentUser = get_user
+
+        users = User.where("lower(username) like ?", "%#{params[:username].downcase}%")
+
+        sendUsers = users.filter { |user| user.id != currentUser.id }
+
+        render json: sendUsers
     end
 
 

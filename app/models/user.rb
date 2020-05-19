@@ -2,6 +2,8 @@ class User < ApplicationRecord
     has_secure_password
 
     validates :steamID64, length: { is: 17 }
+    validates :username, uniqueness: true
+    
 
     def age
         now = Time.now.utc.to_date
