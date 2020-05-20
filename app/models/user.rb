@@ -27,6 +27,24 @@ class User < ApplicationRecord
         JSON.parse(res.body)["response"]["games"]
     end
 
+    def compare_with(user)
+        games_info = {
+            shared: [],
+            other: [],
+        }
+        
+        my_game_ids = self.games.map { |game| game["appid"] }
+        user.games.each do |game|
+            if my_game_ids.include?(game["appid"])
+                games_info[:shared] << game
+            else
+                games_info[:other] << game
+            end
+        end
+        
+        return games_info
+    end
+
     def getAvatar
         player_url = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=#{key}&steamids="
 

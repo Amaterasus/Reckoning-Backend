@@ -2,7 +2,8 @@ class UsersController < ApplicationController
 
     def show
         user = User.find_by(id: params[:id])
-        if user.games
+        # games = get_user.compare_with(user)
+        if user == get_user
             render json: {user: user, games: user.games }
         else
             render json: {user: user, message: "Games failed to fetch" }
