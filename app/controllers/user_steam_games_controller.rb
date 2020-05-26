@@ -1,0 +1,2 @@
+class UserSteamGamesController < ApplicationController
+end

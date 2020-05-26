@@ -1,6 +1,9 @@
 class User < ApplicationRecord
     has_secure_password
 
+    has_many :user_steam_games
+    has_many :steam_games, through: :user_steam_games
+
     validates :steamID64, length: { is: 17 }
     validates :username, uniqueness: true
     
@@ -20,11 +23,24 @@ class User < ApplicationRecord
         ENV["STEAM_KEY"]
     end
 
-    def games
+    def get_games
         games_url = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=#{key}&include_appinfo=true&steamid="
 
         res = RestClient.get("#{games_url}#{self.steamID64}")
         JSON.parse(res.body)["response"]["games"]
+    end
+
+    def cache_games
+        self.get_games.each do |game|
+            steam_game = SteamGame.find_by(appid: game["appid"])
+            if !steam_game
+                steam_game = SteamGame.create(appid: game["appid"], name: game["name"])
+            end
+
+            if !self.steam_games.include?(steam_game)
+                UserSteamGame.create(steam_game_id: steam_game.id, user_id: self.id)
+            end
+        end
     end
 
     def compare_with(user)
@@ -33,8 +49,8 @@ class User < ApplicationRecord
             other: [],
         }
         
-        my_game_ids = self.games.map { |game| game["appid"] }
-        user.games.each do |game|
+        my_game_ids = self.steam_games.map { |game| game["appid"] }
+        user.steam_games.each do |game|
             if my_game_ids.include?(game["appid"])
                 games_info[:shared] << game
             else

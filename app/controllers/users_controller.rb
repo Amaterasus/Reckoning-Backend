@@ -2,9 +2,9 @@ class UsersController < ApplicationController
 
     def show
         user = User.find_by(id: params[:id])
-        # 
+        
         if user == get_user
-            render json: {user: user, games: user.games }
+            render json: {user: user, games: user.steam_games }
         else
             compared = get_user.compare_with(user)
             render json: {user: user, games: compared }
@@ -15,7 +15,8 @@ class UsersController < ApplicationController
         user = User.create(create_user_params)
 
         if user.valid?
-            render json: { id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, games: user.games, avatar_url: user.steam_avatar_url, token: generate_token({id: user.id}) }
+            user.cache_games
+            render json: { id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, games: user.steam_games, avatar_url: user.steam_avatar_url, token: generate_token({id: user.id}) }
         else
             render json: { message: "login error"}
         end
@@ -25,7 +26,7 @@ class UsersController < ApplicationController
         user = User.find_by(username: params[:username])
 
         if user && user.authenticate(params[:password])
-            render json: { id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, games: user.games, avatar_url: user.steam_avatar_url, token: generate_token({id: user.id}) }
+            render json: { id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, games: user.steam_games, avatar_url: user.steam_avatar_url, token: generate_token({id: user.id}) }
         else
             render json: { message: "login error"}
         end
@@ -35,7 +36,7 @@ class UsersController < ApplicationController
         user = get_user
         
         if user
-            render json: { id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, avatar_url: user.steam_avatar_url, games: user.games, token: generate_token({id: user.id}) }
+            render json: { id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, avatar_url: user.steam_avatar_url, games: user.steam_games, token: generate_token({id: user.id}) }
         else
             render json: { message: "login error"}
         end
