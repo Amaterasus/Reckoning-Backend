@@ -45,7 +45,7 @@ class User < ApplicationRecord
         return games_info
     end
 
-    def getAvatar
+    def get_avatar
         player_url = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=#{key}&steamids="
 
         res = RestClient.get("#{player_url}#{steamID64}")

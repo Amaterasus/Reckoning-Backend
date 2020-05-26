@@ -3,7 +3,7 @@ class UsersController < ApplicationController
     def show
         user = User.find_by(id: params[:id])
         # games = get_user.compare_with(user)
-        if user == get_user
+        if user.games
             render json: {user: user, games: user.games }
         else
             render json: {user: user, message: "Games failed to fetch" }
@@ -11,10 +11,10 @@ class UsersController < ApplicationController
     end
 
     def register
-        user = User.create(createUserParams)
+        user = User.create(create_user_params)
 
         if user.valid?
-            render json: {id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, games: user.games, avatar_url: user.steam_avatar_url, token: generate_token({id: user.id})}
+            render json: { id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, games: user.games, avatar_url: user.steam_avatar_url, token: generate_token({id: user.id}) }
         else
             render json: { message: "login error"}
         end
@@ -24,7 +24,7 @@ class UsersController < ApplicationController
         user = User.find_by(username: params[:username])
 
         if user && user.authenticate(params[:password])
-            render json: {id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, games: user.games, avatar_url: user.steam_avatar_url, token: generate_token({id: user.id})}
+            render json: { id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, games: user.games, avatar_url: user.steam_avatar_url, token: generate_token({id: user.id}) }
         else
             render json: { message: "login error"}
         end
@@ -34,16 +34,16 @@ class UsersController < ApplicationController
         user = get_user
         
         if user
-            render json: {id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, avatar_url: user.steam_avatar_url, games: user.games, token: generate_token({id: user.id})}
+            render json: { id: user.id, username: user.username, bio: user.bio, age: user.age, steamID64: user.steamID64, avatar_url: user.steam_avatar_url, games: user.games, token: generate_token({id: user.id}) }
         else
             render json: { message: "login error"}
         end
     end
 
     def avatar
-        avatar = User.new(steamID64: params[:user][:steamID64]).getAvatar["avatarfull"]
+        avatar = User.new(steamID64: params[:user][:steamID64]).get_avatar["avatarfull"]
 
-        render json: {steam_avatar_url: avatar}
+        render json: { steam_avatar_url: avatar }
     end
 
     def search
@@ -51,19 +51,42 @@ class UsersController < ApplicationController
 
         users = User.where("lower(username) like ?", "%#{params[:username].downcase}%")
 
-        sendUsers = users.filter { |user| user.id != currentUser.id }
+        send_users = users.filter { |user| user.id != currentUser.id }
 
-        render json: sendUsers
+        render json: send_users
     end
 
+    def update_password
+        user = get_user
+
+        if user.update(password_params)
+            render json: { message: "Success" }
+        else
+            render json: { message: "Failure" }
+        end
+    end
+
+    def update_details
+        user = get_user
+
+        if user.update(details_params)
+            render json: { bio: user.bio }
+        else
+            render json: { message: "Failure" }
+        end
+    end
 
     private
 
-    def createUserParams
+    def create_user_params
         params.require(:user).permit(:username, :email, :dob, :steamID64, :password, :password_confirmation, :steam_avatar_url)
     end
 
-    def passwordParams
+    def password_params
         params.permit(:password, :password_confirmation)
+    end
+
+    def details_params
+        params.permit(:bio)
     end
 end
