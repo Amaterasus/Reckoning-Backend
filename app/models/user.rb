@@ -32,13 +32,19 @@ class User < ApplicationRecord
 
     def cache_games
         self.get_games.each do |game|
-            steam_game = SteamGame.find_by(appid: game["appid"])
-            if !steam_game
-                steam_game = SteamGame.create(appid: game["appid"], name: game["name"])
-            end
-
-            if !self.steam_games.include?(steam_game)
-                UserSteamGame.create(steam_game_id: steam_game.id, user_id: self.id)
+            url = URI.parse("https://steamcdn-a.akamaihd.net/steam/apps/#{game["appid"]}/header.jpg")
+            req = Net::HTTP.new(url.host, url.port)
+            req.use_ssl = true
+            res = req.request_head(url.path)
+            if res.code == "200"
+                steam_game = SteamGame.find_by(appid: game["appid"])
+                if !steam_game
+                    steam_game = SteamGame.create(appid: game["appid"], name: game["name"])
+                end
+    
+                if !self.steam_games.include?(steam_game)
+                    UserSteamGame.create(steam_game_id: steam_game.id, user_id: self.id)
+                end
             end
         end
     end
