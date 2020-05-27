@@ -62,13 +62,19 @@ class User < ApplicationRecord
     end
 
     def group_finder(users)
-        output = Hash.new(0)
+        output = Hash.new()
         users_array = [self, users].flatten
 
         users_array.each do |user| 
-            user.steam_games.each { |game| output[game] += 1 }
+            user.steam_games.each do |game| 
+                if !output[{ name: game["name"], appid: game["appid"] }] 
+                    output[{ name: game["name"], appid: game["appid"] }] = []
+                end
+                output[{ name: game["name"], appid: game["appid"] }] << user.username
+            end
         end
-        output.sort_by { |key, value| value }.reverse
+
+        output.sort_by { |key, value| value.length }.reverse.to_h
     end
 
 
