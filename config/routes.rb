@@ -7,6 +7,8 @@ Rails.application.routes.draw do
 
   post "/search", to: "users#search"
 
+  post "/groupfinder", to: "users#find_group_games"
+
   post "/avatar", to: "users#avatar"
 
   post "/updatepassword", to: "users#update_password"

@@ -58,8 +58,19 @@ class User < ApplicationRecord
             end
         end
         
-        return games_info
+        games_info
     end
+
+    def group_finder(users)
+        output = Hash.new(0)
+        users_array = [self, users].flatten
+
+        users_array.each do |user| 
+            user.steam_games.each { |game| output[game] += 1 }
+        end
+        output.sort_by { |key, value| value }.reverse
+    end
+
 
     def get_avatar
         player_url = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=#{key}&steamids="

@@ -78,6 +78,14 @@ class UsersController < ApplicationController
         end
     end
 
+    def find_group_games
+        user = get_user
+
+        group = User.where(id: params["_json"])
+
+        render json: user.group_finder(group)
+    end
+
     private
 
     def create_user_params
