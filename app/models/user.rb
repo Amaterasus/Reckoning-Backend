@@ -67,10 +67,10 @@ class User < ApplicationRecord
 
         users_array.each do |user| 
             user.steam_games.each do |game| 
-                if !output[{ name: game["name"], appid: game["appid"] }] 
-                    output[{ name: game["name"], appid: game["appid"] }] = []
+                if !output[game["appid"]] 
+                    output[game["appid"]] = []
                 end
-                output[{ name: game["name"], appid: game["appid"] }] << user.username
+                output[game["appid"]] << user.username
             end
         end
 
