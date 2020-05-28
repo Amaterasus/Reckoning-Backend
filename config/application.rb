@@ -26,7 +26,7 @@ module ReckoningBackend
 
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins '*'
+        origins 'reckoning.netlify.app'
         resource '*', headers: :any, methods: [:patch,:get, :post, :delete]
       end
     end
